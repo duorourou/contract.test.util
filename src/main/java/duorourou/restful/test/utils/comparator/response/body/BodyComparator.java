@@ -13,9 +13,6 @@ import static com.google.common.collect.Lists.newArrayList;
 
 public abstract class BodyComparator {
 
-    private final List<String> ignoreValueFields = newArrayList();
-
-
     public List<CompareResult> compare(JsonNode expect, JsonNode actual) {
 
         List<CompareResult> compareResult = newArrayList();
