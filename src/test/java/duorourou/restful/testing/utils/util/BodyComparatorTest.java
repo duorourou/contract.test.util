@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.POJONode;
 import duorourou.restful.test.utils.comparator.response.body.BodyComparator;
+import duorourou.restful.test.utils.comparator.response.body.DefaultBodyComparator;
 import duorourou.restful.test.utils.comparator.result.ArraySizeNotEqualResult;
 import duorourou.restful.test.utils.comparator.result.CompareResult;
 import duorourou.restful.test.utils.comparator.result.FieldNotExistResult;
@@ -25,7 +26,7 @@ public class BodyComparatorTest {
 
     @Before
     public void setUp() throws Exception {
-        bodyComparator = new BodyComparator();
+        bodyComparator = new DefaultBodyComparator();
     }
 
     @After

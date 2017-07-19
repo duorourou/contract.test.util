@@ -11,7 +11,10 @@ import java.util.Objects;
 
 import static com.google.common.collect.Lists.newArrayList;
 
-public class BodyComparator {
+public abstract class BodyComparator {
+
+    private final List<String> ignoreValueFields = newArrayList();
+
 
     public List<CompareResult> compare(JsonNode expect, JsonNode actual) {
 
@@ -20,8 +23,8 @@ public class BodyComparator {
         while (iterator.hasNext()) {
             Map.Entry<String, JsonNode> entry = iterator.next();
             if (actual.has(entry.getKey())) {
-                compareJsonNode(compareResult, entry.getKey(), entry.getValue(), actual.get(entry.getKey()));
-            } else {
+                compareJsonNode(compareResult, entry.getKey(), entry.getKey(), entry.getValue(), actual.get(entry.getKey()));
+            } else if (fieldCheckingAssertion(entry.getKey(), entry.getKey())) {
                 compareResult.add(CompareResult.build(entry.getKey(), null, null, CompareResultType.FIELD_NOT_EXIST));
             }
         }
@@ -32,7 +35,7 @@ public class BodyComparator {
         return Objects.equals(expect, actual);
     }
 
-    private void compareArrayValue(List<CompareResult> compareResult, String currentKey,
+    private void compareArrayValue(List<CompareResult> compareResult, String currentKey, String path,
                                    JsonNode expect, JsonNode actual) {
         List<JsonNode> originList = newArrayList(expect.elements());
         List<JsonNode> destList = newArrayList(actual.elements());
@@ -41,23 +44,37 @@ public class BodyComparator {
             return;
         }
         for (int index = 0; index < originList.size(); index++) {
-            compareJsonNode(compareResult, currentKey + "[" + index + "]", originList.get(index), destList.get(index));
+            compareJsonNode(compareResult, currentKey + "[" + index + "]", path + "[" + index + "]", originList.get(index), destList.get(index));
         }
     }
 
-    private void compareJsonNode(List<CompareResult> compareResult, String currentKey, JsonNode expect, JsonNode actual) {
+    private void compareJsonNode(List<CompareResult> compareResult, String currentKey, String path,
+                                 JsonNode expect, JsonNode actual) {
+        if (!fieldCheckingAssertion(path, currentKey)) {
+            return;
+        }
         if (expect.getNodeType() != actual.getNodeType()) {
             CompareResult.build(currentKey, expect, actual, CompareResultType.TYPE_NOT_EQUAL);
             return;
         }
+        compareValue(compareResult, currentKey, path, expect, actual);
+    }
+
+    private void compareValue(List<CompareResult> compareResult, String currentKey, String path, JsonNode expect, JsonNode actual) {
         if (expect.isObject()) {
             expect.fields().forEachRemaining(entry -> compareJsonNode(compareResult,
-                    currentKey + "." + entry.getKey(), entry.getValue(), actual.get(entry.getKey())));
+                    entry.getKey(), getCurrentPath(path, entry.getKey()), entry.getValue(), actual.get(entry.getKey())));
         } else if (expect.isArray()) {
-            compareArrayValue(compareResult, currentKey, expect, actual);
+            compareArrayValue(compareResult, currentKey, path, expect, actual);
         } else if (!compareValue(expect.asText(), actual.asText())) {
-            compareResult.add(CompareResult.build(currentKey, expect, actual, CompareResultType.VALUE_NOT_EQUAL));
+            compareResult.add(CompareResult.build(path, expect, actual, CompareResultType.VALUE_NOT_EQUAL));
         }
     }
+
+    private String getCurrentPath(String parentPath, String currentField) {
+        return parentPath + "." + currentField;
+    }
+
+    public abstract boolean fieldCheckingAssertion(String path, String fieldName);
 
 }

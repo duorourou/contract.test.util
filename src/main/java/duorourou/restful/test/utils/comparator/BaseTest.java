@@ -2,7 +2,7 @@ package duorourou.restful.test.utils.comparator;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import duorourou.restful.test.utils.comparator.response.body.BodyComparator;
+import duorourou.restful.test.utils.comparator.response.body.DefaultBodyComparator;
 import duorourou.restful.test.utils.comparator.result.CompareResult;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -22,7 +22,7 @@ public class BaseTest {
         Request request = new Request.Builder().url(url).build();
         Response response = okHttpClient.newCall(request).execute();
         JsonNode node = mapper.convertValue(response.body(), JsonNode.class);
-        List<CompareResult> results = new BodyComparator().compare(getContract(), node);
+        List<CompareResult> results = new DefaultBodyComparator().compare(getContract(), node);
     }
 
     private JsonNode getContract() {
