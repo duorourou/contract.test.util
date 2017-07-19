@@ -1,0 +1,32 @@
+[
+  {
+    "case": "",
+    "response": {
+      "headers": {
+        "Content-Type": "application/json;charset=UTF-8",
+        "Date": "Tue, 18 Jul 2017 09:27:32 GMT",
+        "Transfer-Encoding": "chunked"
+      },
+      "status": 200,
+      "body": {
+        "id": "abc",
+        "title": null,
+        "desc": null,
+        "estimation": null,
+        "type": null,
+        "priority": null,
+        "release": null,
+        "iteration": null,
+        "dueDate": null,
+        "risk": null,
+        "fields": null,
+        "activeLogs": null,
+        "owners": null,
+        "position": null,
+        "creator": null,
+        "lastModifiedDate": null,
+        "createdDate": null
+      }
+    }
+  }
+]
