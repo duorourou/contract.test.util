@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import duorourou.restful.test.utils.comparator.result.CompareResult;
 import duorourou.restful.test.utils.comparator.result.CompareResultType;
 
+import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +42,8 @@ public abstract class BodyComparator {
             return;
         }
         for (int index = 0; index < originList.size(); index++) {
-            compareJsonNode(compareResult, currentKey + "[" + index + "]", path + "[" + index + "]", originList.get(index), destList.get(index));
+            String formattedIndex = formatIndex(index);
+            compareJsonNode(compareResult, currentKey + formattedIndex, path + formattedIndex, originList.get(index), destList.get(index));
         }
     }
 
@@ -73,5 +75,9 @@ public abstract class BodyComparator {
     }
 
     public abstract boolean fieldCheckingAssertion(String path, String fieldName);
+
+    private String formatIndex(int index) {
+        return MessageFormat.format("[{0}]", index);
+    }
 
 }

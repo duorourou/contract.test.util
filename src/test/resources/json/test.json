@@ -1,0 +1,31 @@
+{
+  "desc": "Get user by id",
+  "request": {
+    "url": "/api/users/{id}",
+    "method": "GET",
+    "desc": {
+      "id": {
+        "length": "[1, 10]",
+        "type": "long",
+        "max": 9999999,
+        "min": 0
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "id": {
+        "length": "[1, 10]",
+        "type": "long",
+        "max": 9999999,
+        "min": 0
+      },
+      "name": {
+        "length": "[1, 10]",
+        "type": "string",
+        "nullable": false
+      }
+    }
+  }
+}
