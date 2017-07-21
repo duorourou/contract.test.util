@@ -1,0 +1,31 @@
+[
+  {
+    "case": "get_a_card_with_id_abc",
+    "request": {
+      "url": "http://localhost:8999/cards/abc",
+      "method": "GET"
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "id": "abcd",
+        "title": null,
+        "desc": null,
+        "estimation": null,
+        "type": null,
+        "priority": null,
+        "release": null,
+        "iteration": null,
+        "dueDate": null,
+        "risk": null,
+        "fields": null,
+        "activeLogs": null,
+        "owners": null,
+        "position": null,
+        "creator": null,
+        "lastModifiedDate": null,
+        "createdDate": null
+      }
+    }
+  }
+]
