@@ -3,7 +3,11 @@ package duorourou.restful.test.utils.assertion;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import duorourou.restful.test.utils.comparator.response.body.DefaultBodyComparator;
+import duorourou.restful.test.utils.comparator.response.header.HeaderComparator;
+import duorourou.restful.test.utils.comparator.response.status.StatusComparator;
+import duorourou.restful.test.utils.comparator.result.CompareResult;
 import duorourou.restful.test.utils.http.RequestSender;
+import okhttp3.Headers;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
@@ -23,23 +27,30 @@ public class Assertion {
         RequestSender sender = new RequestSender();
         try {
             Response response = sender.send(testCase);
-            assertBody(testCase, response.body());
+            assertHeaders(testCase.get(RESPONSE).get(RESPONSE_HEADER), response.headers());
+            assertStatus(testCase.get(RESPONSE).get(RESPONSE_STATUS), response.code());
+            assertBody(testCase.get(RESPONSE).get(RESPONSE_BODY), response.body());
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void assertStatus() {
-
+    private void assertStatus(JsonNode statusNode, int status) {
+        CompareResult result = new StatusComparator().compare(statusNode, status);
+        if (result != null) {
+            assertThat(result.getFieldName(), result.getActual(), equalTo(result.getExpect()));
+        }
     }
 
-    private void assertHeaders() {
-
+    private void assertHeaders(JsonNode headerNode, Headers headers) {
+        new HeaderComparator()
+                .compare(headerNode, headers)
+                .forEach(result -> assertThat(result.getFieldName(), result.getActual(), equalTo(result.getExpect())));
     }
 
-    private void assertBody(JsonNode testCase, ResponseBody body) throws IOException {
+    private void assertBody(JsonNode bodyNode, ResponseBody body) throws IOException {
         new DefaultBodyComparator()
-                .compare(testCase.get(RESPONSE).get(RESPONSE_BODY), new ObjectMapper().readTree(body.bytes()))
+                .compare(bodyNode, new ObjectMapper().readTree(body.bytes()))
                 .forEach(result -> assertThat(result.getFieldName(), result.getActual(), equalTo(result.getExpect())));
     }
 
