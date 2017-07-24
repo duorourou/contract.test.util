@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.stream.Collectors.toList;
@@ -25,6 +26,7 @@ public class Assertion {
     private static final String RESPONSE_BODY = "body";
     private static final String RESPONSE_HEADER = "headers";
     private static final String RESPONSE_STATUS = "status";
+    private static final String EMPTY_STR = "";
 
     public void assertion(JsonNode testCase) {
         RequestSender sender = new RequestSender();
@@ -47,12 +49,10 @@ public class Assertion {
 
     private void doAssert(Response response, JsonNode expect, List<CompareResult> results) {
         if (!results.isEmpty()) {
-            LOGGER.info("Expect : {} ", expect.get(RESPONSE).toString().replaceAll(LINE_SEPARATOR, " "));
-            LOGGER.error("Actual : {} ", response.toString());
-            throw new AssertionError(results.stream()
-                    .map(CompareResult::toString).reduce((a, b) -> a + b).get());
+            LOGGER.info("Expect : {} ", expect.get(RESPONSE).toString().replaceAll(LINE_SEPARATOR, EMPTY_STR));
+            LOGGER.info("Actual : {} ", response.toString());
+            throw new AssertionError(buildErrorMessage(results));
         }
-
     }
 
     private CompareResult compareStatus(int expectStatus, int status) {
@@ -68,9 +68,8 @@ public class Assertion {
     }
 
     private String buildErrorMessage(List<CompareResult> compareResults) {
-        StringBuilder builder = new StringBuilder();
-        compareResults.forEach(result -> builder.append(""));
-
-        return builder.toString();
+        Optional<String> result = compareResults.stream()
+                .map(CompareResult::toString).reduce((a, b) -> a + b);
+        return result.orElse(EMPTY_STR);
     }
 }

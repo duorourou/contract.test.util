@@ -39,5 +39,4 @@ public class RequestSender {
     private String getMethod(JsonNode requestNode) {
         return requestNode.get(METHOD).asText();
     }
-
 }
