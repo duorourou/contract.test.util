@@ -2,30 +2,39 @@
   {
     "case": "get_a_card_with_id_abc",
     "request": {
-      "url": "http://localhost:8999/cards/abc",
+      "url": "http://localhost:8999/cards",
       "method": "GET"
     },
     "response": {
       "status": 200,
-      "body": {
-        "id": "abc",
-        "title": null,
-        "desc": null,
-        "estimation": "222",
-        "type": null,
-        "priority": null,
-        "release": null,
-        "iteration": null,
-        "dueDate": null,
-        "risk": null,
-        "fields": null,
-        "activeLogs": null,
-        "owners": null,
-        "position": null,
-        "creator": null,
-        "lastModifiedDate": null,
-        "createdDate": null
-      }
+      "body": [
+        {
+          "id": "1234",
+          "lambda": "",
+          "desc": null,
+          "estimation": "222",
+          "type": null,
+          "priority": null,
+          "release": null,
+          "iteration": null,
+          "dueDate": null,
+          "risk": null,
+          "fields": null,
+          "activeLogs": [
+            {
+              "operatorId": "002",
+              "operationTime": null,
+              "originValue": null,
+              "destValue": null
+            }
+          ],
+          "owners": null,
+          "position": null,
+          "creator": null,
+          "lastModifiedDate": null,
+          "createdDate": null
+        }
+      ]
     }
   }
 ]

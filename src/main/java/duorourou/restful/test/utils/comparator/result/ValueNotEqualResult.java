@@ -8,7 +8,6 @@ public class ValueNotEqualResult extends CompareResult<String> {
         super(fieldName);
     }
 
-
     public static ValueNotEqualResult build(String fieldName, JsonNode expect, JsonNode actual) {
         ValueNotEqualResult result = new ValueNotEqualResult(fieldName);
         result.setActual(actual.asText());

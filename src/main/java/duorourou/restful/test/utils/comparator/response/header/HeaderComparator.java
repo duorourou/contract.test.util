@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.node.TextNode;
 import duorourou.restful.test.utils.comparator.result.CompareResult;
 import duorourou.restful.test.utils.comparator.result.FieldNotExistResult;
 import duorourou.restful.test.utils.comparator.result.ValueNotEqualResult;
-import okhttp3.Headers;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -16,7 +15,7 @@ import static com.google.common.collect.Lists.newArrayList;
 
 public class HeaderComparator {
 
-    public List<CompareResult> compare(JsonNode expect, Headers headers) {
+    public List<CompareResult> compare(JsonNode expect, Map<String, String> headers) {
         if(expect == null) {
             return Collections.emptyList();
         }
@@ -34,11 +33,11 @@ public class HeaderComparator {
         return compareResult;
     }
 
-    private boolean isExistedHeader(Headers headers, Map.Entry<String, JsonNode> expectHeader) {
-        return headers.names().contains(expectHeader.getKey());
+    private boolean isExistedHeader(Map<String, String> headers, Map.Entry<String, JsonNode> expectHeader) {
+        return headers.keySet().contains(expectHeader.getKey());
     }
 
-    private boolean isSameHeader(Headers headers, Map.Entry<String, JsonNode> expectHeader) {
+    private boolean isSameHeader(Map<String, String> headers, Map.Entry<String, JsonNode> expectHeader) {
         return (expectHeader.getValue() == null && headers.get(expectHeader.getKey()) == null)
                 ||
                 (expectHeader.getValue() != null

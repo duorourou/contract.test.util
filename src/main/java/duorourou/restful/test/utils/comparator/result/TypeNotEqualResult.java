@@ -10,8 +10,8 @@ public class TypeNotEqualResult extends CompareResult<String> {
 
     public static TypeNotEqualResult build(String fieldName, JsonNode expect, JsonNode actual) {
         TypeNotEqualResult result = new TypeNotEqualResult(fieldName);
-        result.setActual(actual.getNodeType().name());
-        result.setExpect(expect.getNodeType().name());
+        result.setActual(actual.asText() + " (" + actual.getNodeType().name() + ")");
+        result.setExpect(expect.asText() + " (" + expect.getNodeType().name() + ")");
         return result;
     }
 }

@@ -1,14 +1,14 @@
 package duorourou.restful.test.utils.http;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import okhttp3.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
 
 import java.io.IOException;
 
 public class RequestSender {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RequestSender.class);
 
     private static final String URL = "url";
     private static final String METHOD = "method";
@@ -16,7 +16,7 @@ public class RequestSender {
 
     public Response send(JsonNode node) throws IOException {
         OkHttpClient client = new OkHttpClient.Builder().build();
-        return client.newCall(getRequest(node.get("request"))).execute();
+        return Response.build(client.newCall(getRequest(node.get("request"))).execute());
     }
 
     public Request getRequest(JsonNode requestNode) {

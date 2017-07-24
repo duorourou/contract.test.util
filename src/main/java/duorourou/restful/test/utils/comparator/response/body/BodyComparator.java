@@ -14,19 +14,33 @@ import static com.google.common.collect.Lists.newArrayList;
 
 public abstract class BodyComparator {
 
-    public List<CompareResult> compare(JsonNode expect, JsonNode actual) {
+    private static final String ROOT = "";
 
+    public List<CompareResult> compare(JsonNode expect, JsonNode actual) {
         List<CompareResult> compareResult = newArrayList();
+        if (expect.isArray() && actual.isArray()) {
+            compareArrayValue(compareResult, ROOT, ROOT, expect, actual);
+        } else if (expect.isObject() && actual.isObject()) {
+            compareObject(expect, ROOT, actual, compareResult);
+        } else {
+            compareResult.add(CompareResult.build(ROOT, null, null, CompareResultType.FIELD_NOT_EXIST));
+        }
+        return compareResult;
+    }
+
+    private void compareObject(JsonNode expect, String currentPath,
+                               JsonNode actual, List<CompareResult> compareResult) {
         Iterator<Map.Entry<String, JsonNode>> iterator = expect.fields();
         while (iterator.hasNext()) {
             Map.Entry<String, JsonNode> entry = iterator.next();
             if (actual.has(entry.getKey())) {
-                compareJsonNode(compareResult, entry.getKey(), entry.getKey(), entry.getValue(), actual.get(entry.getKey()));
+                compareJsonNode(compareResult, entry.getKey(),
+                        getCurrentPath(currentPath, entry.getKey()),
+                        entry.getValue(), actual.get(entry.getKey()));
             } else if (fieldCheckingAssertion(entry.getKey(), entry.getKey())) {
-                compareResult.add(CompareResult.build(entry.getKey(), null, null, CompareResultType.FIELD_NOT_EXIST));
+                compareResult.add(CompareResult.build(getCurrentPath(currentPath, entry.getKey()), null, null, CompareResultType.FIELD_NOT_EXIST));
             }
         }
-        return compareResult;
     }
 
     private boolean compareValue(Object expect, Object actual) {
@@ -43,7 +57,8 @@ public abstract class BodyComparator {
         }
         for (int index = 0; index < originList.size(); index++) {
             String formattedIndex = formatIndex(index);
-            compareJsonNode(compareResult, currentKey + formattedIndex, path + formattedIndex, originList.get(index), destList.get(index));
+            compareJsonNode(compareResult, currentKey + formattedIndex,
+                    path + formattedIndex, originList.get(index), destList.get(index));
         }
     }
 
@@ -53,7 +68,7 @@ public abstract class BodyComparator {
             return;
         }
         if (expect.getNodeType() != actual.getNodeType()) {
-            CompareResult.build(currentKey, expect, actual, CompareResultType.TYPE_NOT_EQUAL);
+            compareResult.add(CompareResult.build(path, expect, actual, CompareResultType.TYPE_NOT_EQUAL));
             return;
         }
         compareValue(compareResult, currentKey, path, expect, actual);
@@ -61,8 +76,9 @@ public abstract class BodyComparator {
 
     private void compareValue(List<CompareResult> compareResult, String currentKey, String path, JsonNode expect, JsonNode actual) {
         if (expect.isObject()) {
-            expect.fields().forEachRemaining(entry -> compareJsonNode(compareResult,
-                    entry.getKey(), getCurrentPath(path, entry.getKey()), entry.getValue(), actual.get(entry.getKey())));
+            compareObject(expect, path, actual, compareResult);
+//            expect.fields().forEachRemaining(entry -> compareJsonNode(compareResult,
+//                    entry.getKey(), getCurrentPath(path, entry.getKey()), entry.getValue(), actual.get(entry.getKey())));
         } else if (expect.isArray()) {
             compareArrayValue(compareResult, currentKey, path, expect, actual);
         } else if (!compareValue(expect.asText(), actual.asText())) {

@@ -9,5 +9,4 @@ public class BodyTest extends BaseTest {
     public void get_a_card_with_id_abc() {
         executeAssertion();
     }
-
 }
